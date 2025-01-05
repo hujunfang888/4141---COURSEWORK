@@ -1,0 +1,38 @@
+file.choose() #path 
+vcf_file <- "/Users/phoebe/Desktop/LIFE4141_coursework_resources 2024-2025-20241223/Data, helpful code and files/LAB_NEN_ODN.clean_BI.ann.3mbChr5.vcf.gz"
+file.exists(vcf_file) #ensure file exit
+library(vcfR) #load file
+vcf<-read.vcfR(vcf_file)
+print(vcf)
+summary(vcf)
+ # run pca
+library(adegenet)
+
+#change as genlight data
+genlight_obj<-vcfR2genlight(vcf)
+print(genlight_obj)
+
+#set group information
+sample_names <- colnames(vcf@gt)[-1] #ignore first row
+print(sample_names)
+pop(genlight_obj)<-c(rep("LAB",8), rep("NENT",7), rep("ODN",7))
+table(pop(genlight_obj))
+
+#using glpca run pca
+pca_res <- glPca(genlight_obj, nf=3)
+print(pca_res)
+
+#creat datafream
+pca_df <- data.frame(PC1 = pca_res$scores[,1], 
+                     PC2 = pca_res$scores[,2], 
+                     Population = pop(genlight_obj))
+head(pca_df)#check data
+
+#using ggplot2 draw PCA
+library(ggplot2)
+ggplot(pca_df, aes(x = PC1, y = PC2, color = Population)) +
+  geom_point(size = 3) +
+  theme_minimal() +
+  labs(title = "PCA of Cochlearia Populations",
+       x = "PC1",
+       y = "PC2")
