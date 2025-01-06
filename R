@@ -1,0 +1,21 @@
+#fst scan
+
+#VISUAL FST
+library(ggplot2)
+fst_data <- read.table("LAB_vs_NENT_Fst.windowed.weir.fst", header=TRUE)
+ggplot(fst_data, aes(x=BIN_START, y=WEIGHTED_FST)) +
+  geom_point(alpha=0.5) +
+  labs(title="Fst Across Genome: LAB vs NENT", x="Genomic Position", y="Weighted Fst")
+
+#绘制基因组上 高Fst 值的分布图
+library(ggplot2)
+
+fst_data <- read.table("LAB_vs_NENT_Fst.windowed.weir.fst", header=TRUE)
+high_fst <- subset(fst_data, WEIGHTED_FST > 0.05)
+
+ggplot(fst_data, aes(x=BIN_START, y=WEIGHTED_FST)) +
+  geom_point(alpha=0.5) +
+  geom_point(data=high_fst, aes(x=BIN_START, y=WEIGHTED_FST), color="red") +
+  labs(title="High Fst Region : LAB vs NENT", x="Genomic Position", y="Weighted Fst")
+
+#加入补充注释
