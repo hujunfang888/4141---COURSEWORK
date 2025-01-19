@@ -3,12 +3,12 @@ conda env list
 conda activate base
 vcftools --version
 
-#在系统中搜索文件
+#Search for files（ LAB_NEN_ODN.clean_BI.ann.vcf.gz） in the system
 find ~/ -name "LAB_NEN_ODN.clean_BI.ann.3mbChr5.vcf.gz" 
 
-#切换到文件所在目录
+#Switch to the directory where this file is located
 cd "/Users/phoebe/Desktop/LIFE4141_coursework_resources 2024-2025-20241223/Data, helpful code and files"
-#创建样本txt
+#Create a population sampletxt
 nano LAB_population.txt
 LAB_004
 LAB_1
@@ -28,7 +28,7 @@ NEN_4
 NEN_5
 NEN_6   
  
-#运行vcf
+#run vcf
 vcftools --gzvcf LAB_NEN_ODN.clean_BI.ann.3mbChr5.vcf.gz \
          --max-missing 0.8 \
          --maf 0.05 \
@@ -39,19 +39,16 @@ vcftools --gzvcf LAB_NEN_ODN.clean_BI.ann.3mbChr5.vcf.gz \
          --out LAB_vs_NENT_Fst
       
       
-#保存将前 1% 的高 Fst 值区域：
+#Save the top 1% of the areas with high FST values：
 awk 'NR>1 {print $1"\t"$2"\t"$3"\t"$5}' LAB_vs_NENT_Fst.windowed.weir.fst | sort -k4,4nr | head -n $(echo "$(wc -l < LAB_vs_NENT_Fst.windowed.weir.fst) * 0.01" | bc) > high_Fst_windows.bed
-# 选择 Fst 值大于 0.05 的窗口以提取稍高的 Fst 区：
+
+# Select a window with an FST value greater than 0.05 to extract a slightly higher FST area：
 awk '$5 > 0.05 {print $1"\t"$2"\t"$3"\t"$5}' LAB_vs_NENT_Fst.windowed.weir.fst > high_Fst_windows.bed
 
 
 
-#与基因组注释文件比对
-#安装bedtools
+#Alignment with genomic annotation files
+#install bedtools
 conda create -y --name bedtools -c bioconda bedtools
-#procecing bedtools 通过基因注释文件找到高 Fst 窗口内的基因
+#procecing bedtools to find genes within the high FST windowby using annotation files 
 bedtools intersect -a high_Fst_windows.bed -b C_excelsa_V5_braker2_wRseq.gff3 -wa -wb > candidate_genes.bed
-
-#利用补充注释文件（1-2-1_hits_all_gene_descriptions.tsv），为候选基因添加功能描述
-
-
