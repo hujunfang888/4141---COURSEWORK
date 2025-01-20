@@ -1,0 +1,28 @@
+#Alignment with genomic annotation files
+#install bedtools
+conda activate
+conda create -y --name bedtools -c bioconda bedtools
+
+#procecing bedtools to find genes within the high FST windowby using annotation files 
+bedtools intersect -a high_Fst_windows.bed -b C_excelsa_V5_braker2_wRseq.gff3 -wa -wb > candidate_genes.bed
+
+#check file exists
+ls -lh candidate_genes.bed
+
+#view result file
+head candidate_genes.bed
+
+#fliter high fst value genes and set a threshold(fst>0.1) for 'candidate_genes.bed', filter out significant regions
+awk '$4 > 0.1' candidate_genes.bed > significant_fst_genes.bed
+
+#exctact gene IDs
+awk -F'\t' '$7 == "gene" {print $NF}' significant_fst_genes.bed | sed 's/ID=//;s/;.*//' > significant_gene_ids.txt
+
+#view the supplementary annotation file
+head 1-2-1_hits_all_gene_descriptions.tsv
+
+#extract gene IDs from candidate_genes.bed：
+awk -F'\t' '$7 == "gene" {print $NF}' candidate_genes.bed | sed 's/ID=//;s/;.*//'
+
+#match candidate genes with annotation files：
+grep -F -f candidate_gene_ids.txt 1-2-1_hits_all_gene_descriptions.tsv > annotated_candidate_genes.tsv
