@@ -1,4 +1,4 @@
-# 4141course-work-for-pca
+# 4141course-work-for-pca on bash
 conda env list
 conda activate base
 vcftools --version
@@ -28,7 +28,7 @@ NEN_4
 NEN_5
 NEN_6   
  
-#run vcf
+#run vcf on bash
 vcftools --gzvcf LAB_NEN_ODN.clean_BI.ann.3mbChr5.vcf.gz \
          --max-missing 0.8 \
          --maf 0.05 \
@@ -49,10 +49,3 @@ awk 'NR>1 {print $1"\t"$2"\t"$3"\t"$5}' LAB_vs_NENT_Fst.windowed.weir.fst | sort
 # Select a window with an FST value greater than 0.05 to extract a slightly higher FST area：
 awk '$5 > 0.05 {print $1"\t"$2"\t"$3"\t"$5}' LAB_vs_NENT_Fst.windowed.weir.fst > high_Fst_windows.bed
 
-
-
-#Alignment with genomic annotation files
-#install bedtools
-conda create -y --name bedtools -c bioconda bedtools
-#procecing bedtools to find genes within the high FST windowby using annotation files 
-bedtools intersect -a high_Fst_windows.bed -b C_excelsa_V5_braker2_wRseq.gff3 -wa -wb > candidate_genes.bed
